@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Camera } from "expo-camera";
-import BottomNav from "./BottomNav";
+import BottomTabs from "./BottomTabs";
 import CameraPermissionScreen from "../screens/CameraPermissionScreen";
 import ProductDetail from "../screens/ProductDetail";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function MainStack() {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
 
   useEffect(() => {
     (async () => {
-      const { status: cameraStatus } =
-        await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus === "granted");
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasCameraPermission(status === "granted");
     })();
   }, []);
 
@@ -35,7 +34,7 @@ export default function MainStack() {
         </Stack.Screen>
       ) : (
         <>
-          <Stack.Screen name="MainApp" component={BottomNav} />
+          <Stack.Screen name="MainTabs" component={BottomTabs} />
           <Stack.Screen name="ProductDetail" component={ProductDetail} />
         </>
       )}

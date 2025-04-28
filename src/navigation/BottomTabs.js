@@ -6,10 +6,13 @@ import ScanScreen from "../screens/main/ScanScreen";
 import Profile from "../screens/main/Profile";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { useUser } from "@clerk/clerk-expo";
 
 const Tab = createBottomTabNavigator();
 
-export default function BottomNav() {
+export default function BottomTabs() {
+  const { user } = useUser();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -46,11 +49,11 @@ export default function BottomNav() {
             />
           ),
 
-          title: "Merhaba Karen!",
+          title: `Merhaba ${user?.emailAddresses[0].emailAddress}`,
           headerStyle: {
             backgroundColor: "#b7edbb",
           },
-          headerTintColor: "#52c460f",
+          headerTintColor: "#52c46f",
           headerTitleStyle: {
             fontWeight: "bold",
           },

@@ -15,8 +15,8 @@ export default function HomeScreen() {
 
     Animated.timing(progress, {
       toValue: value,
-      duration: 700, // animasyon süresi (ms cinsinden)
-      useNativeDriver: false, // height animasyonu için false olmalı
+      duration: 700,
+      useNativeDriver: false,
     }).start();
   };
 
