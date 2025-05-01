@@ -49,7 +49,7 @@ export default function BottomTabs() {
             />
           ),
 
-          title: `Merhaba ${user?.emailAddresses[0].emailAddress}`,
+          title: `Merhaba ${user?.firstName},`,
           headerStyle: {
             backgroundColor: "#b7edbb",
           },

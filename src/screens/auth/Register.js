@@ -1,21 +1,38 @@
 import { View, Text, Pressable, Image } from "react-native";
-import React, { useState } from "react";
-import { useSignUp } from "@clerk/clerk-expo";
+import React, { useState, useCallback, useEffect } from "react";
+import { useSignUp, useSSO } from "@clerk/clerk-expo";
 import Svg, { Path } from "react-native-svg";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { TextInput } from "react-native-paper";
+import Verification from "./Verification";
+import * as WebBrowser from "expo-web-browser";
+import * as AuthSession from "expo-auth-session";
+
+export const useWarmUpBrowser = () => {
+  useEffect(() => {
+    void WebBrowser.warmUpAsync();
+    return () => {
+      void WebBrowser.coolDownAsync();
+    };
+  }, []);
+};
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function Register({ navigation }) {
+  useWarmUpBrowser();
+
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { startSSOFlow } = useSSO();
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [pendingVerification, setPendingVerification] = useState(false);
-  const [code, setCode] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(true);
 
   const onSignUpPress = async () => {
@@ -25,6 +42,8 @@ export default function Register({ navigation }) {
       await signUp.create({
         emailAddress,
         password,
+        firstName,
+        lastName,
       });
 
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
@@ -34,7 +53,7 @@ export default function Register({ navigation }) {
     }
   };
 
-  const onVerifyPress = async () => {
+  const onVerifyPress = async (code) => {
     if (!isLoaded) return;
 
     try {
@@ -52,20 +71,25 @@ export default function Register({ navigation }) {
     }
   };
 
+  const onGoogleSignIn = useCallback(async () => {
+    try {
+      const { createdSessionId, setActive, signIn, signUp } =
+        await startSSOFlow({
+          strategy: "oauth_google",
+          redirectUrl: AuthSession.makeRedirectUri(),
+        });
+
+      if (createdSessionId) {
+        setActive({ session: createdSessionId });
+      } else {
+      }
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2));
+    }
+  }, []);
+
   if (pendingVerification) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text>E-Postanı onayla</Text>
-        <TextInput
-          value={code}
-          placeholder="Doğrulama kodunu girin"
-          onChangeText={(code) => setCode(code)}
-        />
-        <Pressable onPress={onVerifyPress}>
-          <Text>Onayla</Text>
-        </Pressable>
-      </View>
-    );
+    return <Verification handleVerify={onVerifyPress} />;
   }
 
   return (
@@ -96,21 +120,32 @@ export default function Register({ navigation }) {
       </View>
       <View
         className="flex-1 justify-center items-center"
-        style={{ gap: hp("5%") }}
+        style={{ gap: hp("1%") }}
       >
-        <Image
-          source={require("../../assets/signUp.png")}
-          style={{ width: wp("50%"), height: hp("30%") }}
-        />
-        <View className="items-center" style={{ gap: hp("2%") }}>
+        <View className="items-center" style={{ gap: hp("3%") }}>
           <View className="items-center" style={{ gap: hp("2%") }}>
             <TextInput
-              label="Ad Soyad"
+              label="Ad"
               mode="outlined"
               dense
               autoCapitalize="none"
-              value={fullName}
-              onChangeText={(fullName) => setFullName(fullName)}
+              value={firstName}
+              onChangeText={(firstName) => setFirstName(firstName)}
+              style={{
+                width: wp("80%"),
+                height: hp("6%"),
+                backgroundColor: "#f8f8f8",
+              }}
+              outlineColor="black"
+              activeOutlineColor="black"
+            />
+            <TextInput
+              label="Soyad"
+              mode="outlined"
+              dense
+              autoCapitalize="none"
+              value={lastName}
+              onChangeText={(lastName) => setLastName(lastName)}
               style={{
                 width: wp("80%"),
                 height: hp("6%"),
@@ -157,22 +192,49 @@ export default function Register({ navigation }) {
               }
             />
           </View>
-        </View>
-        <View className="items-center" style={{ gap: hp("1%") }}>
-          <Pressable
-            className="bg-[#b7edbb] justify-center rounded-xl"
-            style={{ width: wp("75%"), height: hp("6%") }}
-            onPress={onSignUpPress}
-          >
-            <Text className="text-center font-bold text-xl">Kaydol</Text>
-          </Pressable>
-          <View className="flex-row">
-            <Text className="font-medium">Zaten hesabın var mı? </Text>
-            <Pressable onPress={() => navigation.navigate("Login")}>
-              <Text className="font-medium italic underline color-[#b7edbb]">
-                Giriş yap
-              </Text>
+          <View className="items-center" style={{ gap: hp("2%") }}>
+            <Pressable
+              className="bg-[#b7edbb] justify-center rounded-xl"
+              style={{ width: wp("75%"), height: hp("6%") }}
+              onPress={onSignUpPress}
+            >
+              <Text className="text-center font-bold text-xl">Kaydol</Text>
             </Pressable>
+            <View className="flex-row items-center" style={{ gap: wp("5%") }}>
+              <View
+                className="border-t self-center border-black"
+                style={{ width: wp("30%") }}
+              />
+              <Text className="font-bold">Veya</Text>
+              <View
+                className="border-t self-center border-black"
+                style={{ width: wp("30%") }}
+              />
+            </View>
+            <Pressable
+              className="bg-[#1c1818] justify-center"
+              style={{ width: wp("65%"), height: hp("7%"), borderRadius: 36 }}
+              onPress={onGoogleSignIn}
+            >
+              <View className="flex-row items-center" style={{ gap: wp("5%") }}>
+                <Image
+                  source={require("../../assets/googleIcon.png")}
+                  className="rounded-full"
+                  style={{ marginLeft: wp("1%") }}
+                />
+                <Text className="color-white text-center font-bold text-base">
+                  Google ile kaydol
+                </Text>
+              </View>
+            </Pressable>
+            <View className="flex-row">
+              <Text className="font-medium">Zaten hesabın var mı? </Text>
+              <Pressable onPress={() => navigation.navigate("Login")}>
+                <Text className="font-medium italic underline color-[#b7edbb]">
+                  Giriş yap
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>

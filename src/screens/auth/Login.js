@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Image } from "react-native";
 import React, { useState } from "react";
-import { useSignIn, useSSO } from "@clerk/clerk-expo";
+import { useSignIn } from "@clerk/clerk-expo";
 import Svg, { Path } from "react-native-svg";
 import {
   widthPercentageToDP as wp,
@@ -31,20 +31,6 @@ export default function Login({ navigation }) {
       }
     } catch (error) {
       console.error(error);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      const { createdSessionId } = await signIn.authenticateWithRedirect({
-        strategy: "oauth_google",
-      });
-
-      if (createdSessionId) {
-        await setActive({ session: createdSessionId });
-      }
-    } catch (err) {
-      console.error("Google login error", err);
     }
   };
 
@@ -85,7 +71,6 @@ export default function Login({ navigation }) {
               dense
               autoCapitalize="none"
               value={emailAddress}
-              placeholder="E-posta"
               onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
               style={{
                 width: wp("80%"),
@@ -103,7 +88,6 @@ export default function Login({ navigation }) {
                 autoCapitalize="none"
                 secureTextEntry={passwordVisible}
                 value={password}
-                placeholder="Şifre"
                 onChangeText={(password) => setPassword(password)}
                 style={{
                   width: wp("80%"),
@@ -119,29 +103,12 @@ export default function Login({ navigation }) {
                   />
                 }
               />
-              <Pressable>
-                <Text className="font-medium italic">Şifreni mi unuttun?</Text>
+              <Pressable onPress={() => navigation.navigate("ForgetPassword")}>
+                <Text className="font-medium italic">Şifremi unuttum</Text>
               </Pressable>
             </View>
-            <View
-              className="flex-row items-center"
-              style={{ marginTop: hp("2%"), gap: wp("5%") }}
-            >
-              <View
-                className="border-t self-center border-black"
-                style={{ width: wp("30%") }}
-              />
-              <Text className="font-bold">Veya</Text>
-              <View
-                className="border-t self-center border-black"
-                style={{ width: wp("30%") }}
-              />
-            </View>
-            <Pressable onPress={handleGoogleSignIn}>
-              <Text>Google ile kaydol</Text>
-            </Pressable>
           </View>
-          <View className="items-center" style={{ gap: hp("1%") }}>
+          <View className="items-center" style={{ gap: hp("2%") }}>
             <Pressable
               className="bg-[#b7edbb] justify-center rounded-xl"
               style={{ width: wp("75%"), height: hp("6%") }}
@@ -149,6 +116,11 @@ export default function Login({ navigation }) {
             >
               <Text className="text-center font-bold text-xl">Giriş yap</Text>
             </Pressable>
+
+            <View
+              className="border-t self-center border-black"
+              style={{ width: wp("65%"), marginTop: hp("1%") }}
+            />
             <View className="flex-row">
               <Text className="font-medium">Hesabın yok mu? </Text>
               <Pressable onPress={() => navigation.navigate("Register")}>

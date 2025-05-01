@@ -26,7 +26,15 @@
       "favicon": "./src/assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": ["expo-font"],
-    "scheme": "foodlens"
+    "plugins": [
+      "expo-font"
+    ],
+    "scheme": "foodlens",
+    "owner": "mehmtcan",
+    "extra": {
+      "eas": {
+        "projectId": "ae6bcc84-aceb-4b0b-999f-0fd2034cf64f"
+      }
+    }
   }
 }
