@@ -24,7 +24,7 @@ export default function ScanScreen({ navigation }) {
 
     try {
       const response = await axios.get(
-        `https://world.openfoodfacts.org/api/v2/product/${data}?fields=product_name,nutriments,nutrition_grades_tags,ingredients_text&lc=tr`
+        `https://world.openfoodfacts.org/api/v2/product/${data}?lc=tr`
       );
 
       if (response.data.status === 0) {
@@ -34,6 +34,7 @@ export default function ScanScreen({ navigation }) {
       }
 
       navigation.navigate("ProductDetail", { product: response.data.product });
+      console.log(response.data);
     } catch (error) {
       console.error("Ürün alınamadı:", error);
     }
