@@ -1,4 +1,12 @@
-import { View, Text, TextInput, Animated, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Animated,
+  Pressable,
+  ScrollView,
+  Image,
+} from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   widthPercentageToDP as wp,
@@ -9,6 +17,8 @@ import ConsumedList from "../../components/consumedCard";
 import { useAuth } from "@clerk/clerk-expo";
 import { cleanOldConsumed } from "../../services/consumedService";
 import { useConsumedToday } from "../../hooks/useConsumedToday";
+import FavoriteCard from "../../components/favoriteCard";
+
 export default function HomeScreen() {
   const favorites = useFavorites();
   const [input, setInput] = useState("");
@@ -127,20 +137,35 @@ export default function HomeScreen() {
           <Text>Protein</Text>
         </View>
       </View>
-      <View>
-        <Text>Favoriler</Text>
-        <View>
-          <Text>Favori Ürünler:</Text>
-          {favorites.map((item) => (
-            <Text key={item.id}>
-              {item.name} - {item.barcode}
-            </Text>
-          ))}
-        </View>
-        <Text>aaa</Text>
-
-        <ConsumedList />
+      <View style={{ gap: hp("2%") }}>
+        <Text className="font-bold text-2xl">Favoriler</Text>
+        {favorites.length === 0 ? (
+          <View className="items-center justify-center">
+            <Image
+              source={require("../../assets/emptyFavorites.png")}
+              style={{
+                width: wp("25%"),
+                height: wp("25%"),
+                resizeMode: "contain",
+              }}
+            />
+            <Text className="font-semibold text-base">Henüz favori yok</Text>
+          </View>
+        ) : (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View className="flex-row" style={{ gap: wp("4%") }}>
+              {favorites.map((item) => (
+                <FavoriteCard
+                  key={item.id}
+                  barcode={item.barcode}
+                  name={item.name}
+                />
+              ))}
+            </View>
+          </ScrollView>
+        )}
       </View>
+      <ConsumedList />
     </View>
   );
 }
