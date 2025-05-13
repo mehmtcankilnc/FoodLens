@@ -34,7 +34,6 @@ export default function ScanScreen({ navigation }) {
       }
 
       navigation.navigate("ProductDetail", { product: response.data.product });
-      console.log(response.data);
     } catch (error) {
       console.error("Ürün alınamadı:", error);
     }
@@ -83,15 +82,28 @@ export default function ScanScreen({ navigation }) {
       </View>
       <View className="items-center">
         {!scanned && (
-          <CameraView
-            style={{ width: 300, height: 500, borderRadius: 24 }}
-            ref={cameraRef}
-            facing="back"
-            mute={false}
-            responsiveOrientationWhenOrientationLocked
-            onBarcodeScanned={handleBarCodeScanned}
-          >
-            <View className="flex-1 justify-center items-center">
+          <View style={{ position: "relative", width: 300, height: 500 }}>
+            <CameraView
+              style={{ width: 300, height: 500, borderRadius: 24 }}
+              ref={cameraRef}
+              facing="back"
+              mute={false}
+              responsiveOrientationWhenOrientationLocked
+              onBarcodeScanned={handleBarCodeScanned}
+            />
+
+            {/* Overlay View burada */}
+            <View
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <View
                 style={{
                   width: "80%",
@@ -104,14 +116,13 @@ export default function ScanScreen({ navigation }) {
                   style={{
                     width: 50,
                     height: 50,
-                    borderColor: "white",
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
                     borderTopWidth: 4,
                     borderLeftWidth: 4,
                     borderTopLeftRadius: 10,
                     borderColor: "#22a45d",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
                   }}
                 />
                 {/* Sağ üst */}
@@ -119,14 +130,13 @@ export default function ScanScreen({ navigation }) {
                   style={{
                     width: 50,
                     height: 50,
-                    borderColor: "white",
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
                     borderTopWidth: 4,
                     borderRightWidth: 4,
                     borderTopRightRadius: 10,
                     borderColor: "#22a45d",
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
                   }}
                 />
                 {/* Sol alt */}
@@ -134,14 +144,13 @@ export default function ScanScreen({ navigation }) {
                   style={{
                     width: 50,
                     height: 50,
-                    borderColor: "white",
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
                     borderBottomWidth: 4,
                     borderLeftWidth: 4,
                     borderBottomLeftRadius: 10,
                     borderColor: "#22a45d",
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
                   }}
                 />
                 {/* Sağ alt */}
@@ -149,19 +158,18 @@ export default function ScanScreen({ navigation }) {
                   style={{
                     width: 50,
                     height: 50,
-                    borderColor: "white",
-                    position: "absolute",
-                    bottom: 0,
-                    right: 0,
                     borderBottomWidth: 4,
                     borderRightWidth: 4,
                     borderBottomRightRadius: 10,
                     borderColor: "#22a45d",
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
                   }}
                 />
               </View>
             </View>
-          </CameraView>
+          </View>
         )}
       </View>
     </View>
