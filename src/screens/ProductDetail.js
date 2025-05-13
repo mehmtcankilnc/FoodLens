@@ -7,24 +7,32 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MyModal from "../components/MyModal";
 import { PaperProvider, TextInput } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import ExtraInfo from "../components/extraInfo";
+import ExtraInfo from "../components/productDetail/extraInfo";
 import Nutriments from "../components/productDetail/nutriments";
-import HealthInfo from "../components/healthInfo";
+import HealthInfo from "../components/productDetail/healthInfo";
 import { addFavorite, removeFavorite } from "../services/favoriteServices";
 import { useAuth } from "@clerk/clerk-expo";
 import { useFavorites } from "../hooks/useFavorites";
+import { addToConsumed } from "../services/consumedService";
+import { useConsumedToday } from "../hooks/useConsumedToday";
 
 export default function ProductDetail({ route }) {
   const { userId } = useAuth();
   const { product } = route.params;
   const [amount, setAmount] = useState("100");
   const [favoritePress, setFavoritePress] = useState(false);
+  const [addPress, setAddPress] = useState(false);
+  const ingredientsText = product.ingredients_text?.toLowerCase();
 
+  const consumed = useConsumedToday();
   const favorites = useFavorites();
   useEffect(() => {
     const isFav = favorites.some((item) => item.barcode === product.id);
     setFavoritePress(isFav);
-  }, [favorites, product.id]);
+
+    const isCons = consumed.some((item) => item.barcode === product.id);
+    setAddPress(isCons);
+  }, [favorites, product.id, consumed]);
 
   const handleFavoritePress = () => {
     setFavoritePress((prev) => !prev);
@@ -39,82 +47,17 @@ export default function ProductDetail({ route }) {
     }
   };
 
-  const ingredientsText = product.ingredients_text?.toLowerCase();
-
-  let palmText = "";
-  let palmColor = "";
-  let sugarLevel = "";
-  let sugarColor = "";
-  const grade = product.nutrition_grades_tags?.[0];
-  console.log(grade);
-
-  if (!ingredientsText) {
-    palmColor = "gray";
-    palmText = "İçerik bilgisi yok";
-    sugarLevel = "İçerik bilgisi yok";
-  } else {
-    const palmKeywords = [
-      "palm",
-      "palmolein",
-      "palm kernel",
-      "hydrogenated palm",
-    ];
-    const hasPalmOil = palmKeywords.some((keyword) =>
-      ingredientsText.includes(keyword)
-    );
-
-    palmColor = hasPalmOil ? "red" : "green";
-    palmText = hasPalmOil ? "Palm içerir" : "Palm içermez";
-  }
-
-  const sugarPer100g = product.nutriments?.sugars;
-
-  if (sugarPer100g === undefined) {
-    sugarColor = "gray";
-    sugarLevel = "Şeker bilgisi yok";
-  } else if (sugarPer100g <= 5) {
-    sugarColor = "green";
-    sugarLevel = "Düşük şekerli";
-  } else if (sugarPer100g <= 22.5) {
-    sugarColor = "orange";
-    sugarLevel = "Orta düzeyde şekerli";
-  } else {
-    sugarColor = "red";
-    sugarLevel = "Yüksek şekerli";
-  }
-
-  let gradeText = "";
-  let gradeColor = "";
-
-  switch (grade) {
-    case "a":
-      gradeText = "Çok sağlıklı";
-      gradeColor = "green";
-      break;
-    case "b":
-      gradeText = "Sağlıklı";
-      gradeColor = "#66bb6a";
-      break;
-    case "c":
-      gradeText = "Orta";
-      gradeColor = "orange";
-      break;
-    case "d":
-      gradeText = "Sağlıksız";
-      gradeColor = "#e57373";
-      break;
-    case "e":
-      gradeText = "Çok sağlıksız";
-      gradeColor = "red";
-      break;
-    default:
-      gradeText = "Bilinmiyor";
-      gradeColor = "gray";
-  }
+  const handleAddPress = () => {
+    setAddPress((prev) => !prev);
+    if (addPress === false) {
+      addToConsumed(userId, product);
+    } else {
+      const existing = consumed.find((item) => item.barcode === product.id);
+      removeFavorite(userId, existing.id);
+    }
+  };
 
   const [visible, setVisible] = useState(false);
-  const [infoModalVisible, setInfoModalVisible] = useState(false);
-  const [infoKey, setInfoKey] = useState("");
   const imageUrl = product.image_front_url;
 
   return (
@@ -173,8 +116,17 @@ export default function ProductDetail({ route }) {
                   color={favoritePress ? "#d62d2d" : "black"}
                 />
               </Pressable>
-              <Pressable style={{ paddingVertical: wp("2%") }}>
-                <Ionicons name="add-circle-outline" size={34} color="black" />
+              <Pressable
+                onPress={handleAddPress}
+                style={{ paddingVertical: wp("2%") }}
+              >
+                <Ionicons
+                  name={
+                    addPress ? "remove-circle-outline" : "add-circle-outline"
+                  }
+                  size={34}
+                  color="black"
+                />
               </Pressable>
             </View>
           </View>
@@ -213,10 +165,10 @@ export default function ProductDetail({ route }) {
               right={<TextInput.Icon icon="pencil" color="#388e3c" />}
             />
           </View>
-          {/* 
+
           <Nutriments product={product} amount={amount} />
           <HealthInfo product={product} />
-          <ExtraInfo product={product} /> */}
+          <ExtraInfo product={product} />
 
           <Pressable onPress={() => setVisible(true)}>
             <Text

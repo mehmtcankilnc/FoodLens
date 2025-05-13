@@ -5,11 +5,23 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useFavorites } from "../../hooks/useFavorites";
-
+import ConsumedList from "../../components/consumedCard";
+import { useAuth } from "@clerk/clerk-expo";
+import { cleanOldConsumed } from "../../services/consumedService";
+import { useConsumedToday } from "../../hooks/useConsumedToday";
 export default function HomeScreen() {
   const favorites = useFavorites();
   const [input, setInput] = useState("");
   const progress = useRef(new Animated.Value(0)).current;
+
+  const { userId } = useAuth();
+  const consumed = useConsumedToday();
+
+  useEffect(() => {
+    if (userId) {
+      cleanOldConsumed(userId);
+    }
+  }, [userId]);
 
   const handleProgressChange = (text) => {
     setInput(text);
@@ -126,6 +138,8 @@ export default function HomeScreen() {
           ))}
         </View>
         <Text>aaa</Text>
+
+        <ConsumedList />
       </View>
     </View>
   );
