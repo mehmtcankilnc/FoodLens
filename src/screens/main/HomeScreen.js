@@ -3,7 +3,6 @@ import {
   Text,
   TextInput,
   Animated,
-  Pressable,
   ScrollView,
   Image,
 } from "react-native";
@@ -51,7 +50,10 @@ export default function HomeScreen() {
   });
 
   return (
-    <View style={{ padding: wp("3%") }} className="flex-1 bg-[#f8f8f8]">
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: hp("10%"), padding: wp("5%") }}
+      className="flex-1 bg-[#f8f8f8]"
+    >
       <TextInput
         placeholder="yağ miktarı gir"
         onChangeText={handleProgressChange}
@@ -59,12 +61,7 @@ export default function HomeScreen() {
         keyboardType="numeric"
         style={{ marginBottom: 20 }}
       />
-      <View
-        style={{
-          padding: wp("2%"),
-        }}
-        className="flex-row justify-around"
-      >
+      <View className="flex-row justify-around">
         <View
           style={{
             width: wp("25%"),
@@ -88,7 +85,6 @@ export default function HomeScreen() {
           />
           <Text>Yağ</Text>
         </View>
-
         <View
           style={{
             width: wp("25%"),
@@ -112,7 +108,6 @@ export default function HomeScreen() {
           />
           <Text>Karbonhidrat</Text>
         </View>
-
         <View
           style={{
             width: wp("25%"),
@@ -137,35 +132,37 @@ export default function HomeScreen() {
           <Text>Protein</Text>
         </View>
       </View>
-      <View style={{ gap: hp("2%") }}>
-        <Text className="font-bold text-2xl">Favoriler</Text>
-        {favorites.length === 0 ? (
-          <View className="items-center justify-center">
-            <Image
-              source={require("../../assets/emptyFavorites.png")}
-              style={{
-                width: wp("25%"),
-                height: wp("25%"),
-                resizeMode: "contain",
-              }}
-            />
-            <Text className="font-semibold text-base">Henüz favori yok</Text>
-          </View>
-        ) : (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View className="flex-row" style={{ gap: wp("4%") }}>
-              {favorites.map((item) => (
-                <FavoriteCard
-                  key={item.id}
-                  barcode={item.barcode}
-                  name={item.name}
-                />
-              ))}
+      <View style={{ gap: hp("3%"), padding: wp("2%") }}>
+        <View style={{ gap: hp("2%") }}>
+          <Text className="font-bold text-2xl">Favoriler</Text>
+          {favorites.length === 0 ? (
+            <View className="items-center justify-center">
+              <Image
+                source={require("../../assets/emptyFavorites.png")}
+                style={{
+                  width: wp("30%"),
+                  height: wp("30%"),
+                  resizeMode: "contain",
+                }}
+              />
+              <Text className="text-base">Henüz Favori Yok</Text>
             </View>
-          </ScrollView>
-        )}
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View className="flex-row" style={{ gap: wp("4%") }}>
+                {favorites.map((item) => (
+                  <FavoriteCard
+                    key={item.id}
+                    barcode={item.barcode}
+                    name={item.name}
+                  />
+                ))}
+              </View>
+            </ScrollView>
+          )}
+        </View>
+        <ConsumedList />
       </View>
-      <ConsumedList />
-    </View>
+    </ScrollView>
   );
 }

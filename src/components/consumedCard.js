@@ -14,15 +14,13 @@ export default function ConsumedList() {
   const { userId } = useAuth();
 
   return (
-    <View>
-      <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}>
-        Bugün Tüketilenler
-      </Text>
+    <View style={{ gap: hp("2%") }}>
+      <Text className="font-bold text-2xl">Bugün Tüketilenler</Text>
 
       {consumed && consumed.length > 0 ? (
         <ScrollView
           style={{
-            maxHeight: hp("40%"), // Yaklaşık 5 ürünlük yer kaplasın
+            maxHeight: hp("40%"),
           }}
           showsVerticalScrollIndicator={false}
         >
@@ -55,12 +53,13 @@ export default function ConsumedList() {
         <View style={{ alignItems: "center", marginTop: wp("4%") }}>
           <Image
             source={require("../assets/noFood.png")}
-            style={{ width: 200, height: 200, marginBottom: 10 }}
-            resizeMode="contain"
+            style={{
+              width: wp("30%"),
+              height: wp("30%"),
+              resizeMode: "contain",
+            }}
           />
-          <Text style={{ color: "black", fontSize: 16 }}>
-            No Food Consumed Today
-          </Text>
+          <Text className="text-base">Bugün Henüz Ürün Tüketilmedi</Text>
         </View>
       )}
     </View>
