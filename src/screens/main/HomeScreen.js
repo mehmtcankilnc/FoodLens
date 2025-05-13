@@ -1,11 +1,13 @@
-import { View, Text, TextInput, Animated } from "react-native";
-import React, { useRef, useState } from "react";
+import { View, Text, TextInput, Animated, Pressable } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useFavorites } from "../../hooks/useFavorites";
 
 export default function HomeScreen() {
+  const favorites = useFavorites();
   const [input, setInput] = useState("");
   const progress = useRef(new Animated.Value(0)).current;
 
@@ -115,6 +117,15 @@ export default function HomeScreen() {
       </View>
       <View>
         <Text>Favoriler</Text>
+        <View>
+          <Text>Favori Ürünler:</Text>
+          {favorites.map((item) => (
+            <Text key={item.id}>
+              {item.name} - {item.barcode}
+            </Text>
+          ))}
+        </View>
+        <Text>aaa</Text>
       </View>
     </View>
   );

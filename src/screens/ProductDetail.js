@@ -1,76 +1,43 @@
 import { View, Text, Image, Pressable, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { useNavigation } from "@react-navigation/native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import AntDesign from "@expo/vector-icons/AntDesign";
+
 import MyModal from "../components/MyModal";
 import { PaperProvider, TextInput } from "react-native-paper";
-import InfoModal from "../components/InfoModal";
-import { useMemo } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-
 import ExtraInfo from "../components/extraInfo";
+import Nutriments from "../components/productDetail/nutriments";
+import HealthInfo from "../components/healthInfo";
+import { addFavorite, removeFavorite } from "../services/favoriteServices";
+import { useAuth } from "@clerk/clerk-expo";
+import { useFavorites } from "../hooks/useFavorites";
 
 export default function ProductDetail({ route }) {
+  const { userId } = useAuth();
   const { product } = route.params;
-  const navigation = useNavigation();
-
   const [amount, setAmount] = useState("100");
+  const [favoritePress, setFavoritePress] = useState(false);
 
-  const nutriments = useMemo(() => {
-    const parsedAmount = parseFloat(amount);
-    const ratio = isNaN(parsedAmount) ? 1 : parsedAmount / 100;
+  const favorites = useFavorites();
+  useEffect(() => {
+    const isFav = favorites.some((item) => item.barcode === product.id);
+    setFavoritePress(isFav);
+  }, [favorites, product.id]);
 
-    return [
-      {
-        name: "Karbonhidrat",
-        value: ((product.nutriments.carbohydrates || 0) * ratio).toFixed(1),
-        iconName: "bread-slice",
-        fc: "#ffb49c",
-        sc: "#ff7a1b",
-      },
-      {
-        name: "Yağ",
-        value: ((product.nutriments.fat || 0) * ratio).toFixed(1),
-        iconName: "droplet",
-        fc: "#f7f296",
-        sc: "#ffda03",
-      },
-      {
-        name: "Protein",
-        value: ((product.nutriments.proteins || 0) * ratio).toFixed(1),
-        iconName: "fish",
-        fc: "#bcdceb",
-        sc: "#5e8aed",
-      },
-      {
-        name: "Şeker",
-        value: ((product.nutriments.sugars || 0) * ratio).toFixed(1),
-        iconName: "candy-cane",
-        fc: "#f6c2d8",
-        sc: "#ef6ea6",
-      },
-      {
-        name: "Lif",
-        value: ((product.nutriments.fiber || 0) * ratio).toFixed(1),
-        iconName: "leaf",
-        fc: "#b7edbb",
-        sc: "#52c46f",
-      },
-      {
-        name: "Doymuş Yağ",
-        value: ((product.nutriments["saturated-fat"] || 0) * ratio).toFixed(1),
-        iconName: "droplet-slash",
-        fc: "#d7c3f8",
-        sc: "#bf9add",
-      },
-    ];
-  }, [amount, product]);
-
-  const [showAll, setShowAll] = useState(false);
+  const handleFavoritePress = () => {
+    setFavoritePress((prev) => !prev);
+    if (favoritePress === false) {
+      addFavorite(userId, {
+        barcode: product.id,
+        name: product.product_name,
+      });
+    } else {
+      const existing = favorites.find((item) => item.barcode === product.id);
+      removeFavorite(userId, existing.id);
+    }
+  };
 
   const ingredientsText = product.ingredients_text?.toLowerCase();
 
@@ -196,8 +163,15 @@ export default function ProductDetail({ route }) {
             <View
               style={{ position: "absolute", top: wp("1%"), right: wp("1%") }}
             >
-              <Pressable style={{ paddingVertical: wp("2%") }}>
-                <MaterialIcons name="favorite-border" size={34} color="black" />
+              <Pressable
+                onPress={handleFavoritePress}
+                style={{ paddingVertical: wp("2%") }}
+              >
+                <AntDesign
+                  name={favoritePress ? "heart" : "hearto"}
+                  size={30}
+                  color={favoritePress ? "#d62d2d" : "black"}
+                />
               </Pressable>
               <Pressable style={{ paddingVertical: wp("2%") }}>
                 <Ionicons name="add-circle-outline" size={34} color="black" />
@@ -239,197 +213,11 @@ export default function ProductDetail({ route }) {
               right={<TextInput.Icon icon="pencil" color="#388e3c" />}
             />
           </View>
+          {/* 
+          <Nutriments product={product} amount={amount} />
+          <HealthInfo product={product} />
+          <ExtraInfo product={product} /> */}
 
-          <Text className="font-bold text-3xl self-center">
-            Enerji Değerleri
-          </Text>
-          <View
-            style={{
-              marginVertical: wp("4%"),
-              padding: wp("4%"),
-              elevation: 4,
-              backgroundColor: "#fffaf0",
-            }}
-          >
-            {(showAll ? nutriments : nutriments.slice(0, 3)).map(
-              (item, index) => (
-                <View
-                  key={index}
-                  style={{
-                    marginBottom: wp("4%"),
-                  }}
-                >
-                  {/* Üst Satır: İkon + Ad + % */}
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: wp("1%"),
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: wp("2%"),
-                      }}
-                    >
-                      <FontAwesome6
-                        name={item.iconName}
-                        size={20}
-                        color={item.sc}
-                      />
-                      <Text style={{ fontSize: wp("4%"), fontWeight: "500" }}>
-                        {item.name}
-                      </Text>
-                    </View>
-                    <Text style={{ fontSize: wp("3.5%"), color: "#555" }}>
-                      %{item.value}
-                    </Text>
-                  </View>
-
-                  {/* Bar */}
-                  <View
-                    style={{
-                      height: wp("4%"),
-                      width: "100%",
-                      backgroundColor: item.fc,
-                      borderRadius: wp("2%"),
-                      overflow: "hidden",
-                    }}
-                  >
-                    <View
-                      style={{
-                        height: "100%",
-                        width: `${item.value}%`,
-                        backgroundColor: item.sc,
-                        borderRadius: wp("2%"),
-                      }}
-                    />
-                  </View>
-                </View>
-              )
-            )}
-
-            {/* Daha fazla göster */}
-            <Pressable
-              onPress={() => setShowAll(!showAll)}
-              style={{ alignItems: "flex-end" }}
-            >
-              <Text
-                style={{
-                  color: "#388e3c",
-                  fontSize: wp("3.5%"),
-                  textDecorationLine: "underline",
-                  fontWeight: "500",
-                }}
-              >
-                {showAll ? "Daha Az Göster" : "Daha Fazla Göster"}
-              </Text>
-            </Pressable>
-          </View>
-
-          <View
-            className="justify-center items-center flex-row"
-            style={{ margin: wp("8%"), gap: wp("5%") }}
-          >
-            <Pressable
-              onPress={() => {
-                setInfoModalVisible(true);
-                setInfoKey("palm");
-              }}
-              style={{
-                width: wp("20%"),
-                height: wp("20%"),
-                elevation: 7,
-              }}
-              className="justify-center items-center  bg-[#fffaf0] rounded-xl"
-            >
-              <MaterialCommunityIcons
-                name="palm-tree"
-                size={45}
-                color={palmColor}
-              />
-              <Text
-                numberOfLines={6}
-                style={{
-                  maxWidth: wp("50%"),
-                  fontSize: 10,
-                }}
-              >
-                {palmText}
-              </Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => {
-                setInfoModalVisible(true);
-                setInfoKey("sugar");
-              }}
-              style={{
-                width: wp("20%"),
-                height: wp("20%"),
-                elevation: 7,
-              }}
-              className="justify-center items-center bg-[#fffaf0] rounded-xl "
-            >
-              <MaterialCommunityIcons
-                name="candy"
-                size={45}
-                color={sugarColor}
-              />
-              <Text
-                numberOfLines={6}
-                style={{
-                  maxWidth: wp("50%"),
-                  fontSize: 10,
-                  textAlign: "center",
-                }}
-              >
-                {sugarLevel}
-              </Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => {
-                setInfoModalVisible(true);
-                setInfoKey("nutri");
-              }}
-              style={{
-                width: wp("20%"),
-                height: wp("20%"),
-                elevation: 7,
-              }}
-              className="justify-center items-center bg-[#fffaf0] rounded-xl "
-            >
-              <FontAwesome6 name="nutritionix" size={45} color={gradeColor} />
-              <Text
-                numberOfLines={6}
-                style={{
-                  maxWidth: wp("50%"),
-                  fontSize: 10,
-                  textAlign: "center",
-                }}
-              >
-                {gradeText}
-              </Text>
-            </Pressable>
-            <InfoModal
-              visible={infoModalVisible}
-              closeModal={() => setInfoModalVisible(false)}
-              infoKey={infoKey}
-            />
-          </View>
-
-          <MyModal
-            visible={visible}
-            closeModal={() => setVisible(false)}
-            modalText={ingredientsText}
-            title="İçindekiler"
-          />
-
-          <ExtraInfo product={product} />
           <Pressable onPress={() => setVisible(true)}>
             <Text
               style={{ padding: wp("4%") }}
@@ -438,6 +226,13 @@ export default function ProductDetail({ route }) {
               İçindekiler
             </Text>
           </Pressable>
+
+          <MyModal
+            visible={visible}
+            closeModal={() => setVisible(false)}
+            modalText={ingredientsText}
+            title="İçindekiler"
+          />
         </ScrollView>
       </View>
     </PaperProvider>
