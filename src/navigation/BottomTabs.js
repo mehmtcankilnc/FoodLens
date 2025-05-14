@@ -49,26 +49,17 @@ export default function BottomTabs() {
             />
           ),
 
-          title: `Merhaba ${user?.firstName},`,
+          title: "FoodLens",
+          headerTitleAlign: "center",
           headerStyle: {
-            backgroundColor: "#b7edbb",
+            backgroundColor: "#3f6942",
           },
-          headerTintColor: "#52c46f",
+          headerTintColor: "white",
           headerTitleStyle: {
             fontWeight: "bold",
           },
           tabBarLabel: "Ana Sayfa",
           headerShown: true,
-          headerRight: () => (
-            <Image
-              source={require("../assets/tabBarIcon.png")}
-              style={{
-                width: wp("11%"),
-                height: wp("11%"),
-                marginRight: wp("4%"),
-              }}
-            />
-          ),
         }}
       />
       <Tab.Screen
@@ -96,8 +87,17 @@ export default function BottomTabs() {
               color={focused ? "#52c46f" : "black"}
             />
           ),
-
           tabBarLabel: "Profil",
+          title: "Profil",
+          headerTitleAlign: "center",
+          headerStyle: {
+            backgroundColor: "#3f6942",
+          },
+          headerTintColor: "white",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+          headerShown: true,
         }}
       />
     </Tab.Navigator>

@@ -5,7 +5,6 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect } from "@react-navigation/native";
-import { SignOutButton } from "../../components/SignOutButton";
 
 export default function ScanScreen({ navigation }) {
   const cameraRef = useRef(null);
@@ -78,7 +77,6 @@ export default function ScanScreen({ navigation }) {
             Galeriden Seç
           </Text>
         </Pressable>
-        <SignOutButton />
       </View>
       <View className="items-center">
         {!scanned && (
