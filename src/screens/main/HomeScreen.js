@@ -20,11 +20,18 @@ import FavoriteCard from "../../components/favoriteCard";
 
 export default function HomeScreen() {
   const favorites = useFavorites();
-  const [input, setInput] = useState("");
-  const progress = useRef(new Animated.Value(0)).current;
-
   const { userId } = useAuth();
   const consumed = useConsumedToday();
+
+  const DAILY_TARGET = {
+    fat: 70,
+    carbohydrates: 300,
+    proteins: 50,
+  };
+
+  const fatProgress = useRef(new Animated.Value(0)).current;
+  const carbProgress = useRef(new Animated.Value(0)).current;
+  const proteinProgress = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (userId) {
@@ -32,36 +39,61 @@ export default function HomeScreen() {
     }
   }, [userId]);
 
-  const handleProgressChange = (text) => {
-    setInput(text);
-    const value = parseFloat(text) || 0;
+  useEffect(() => {
+    if (consumed && consumed.length > 0) {
+      let totalFat = 0;
+      let totalCarbs = 0;
+      let totalProteins = 0;
 
-    Animated.timing(progress, {
-      toValue: value,
-      duration: 700,
-      useNativeDriver: false,
-    }).start();
-  };
+      consumed.forEach((item) => {
+        const n = item.nutriments;
+        totalFat += n?.fat_serving || 0;
+        totalCarbs += n?.carbohydrates_serving || 0;
+        totalProteins += n?.proteins_serving || 0;
+      });
 
-  const animatedHeight = progress.interpolate({
+      Animated.timing(fatProgress, {
+        toValue: (totalFat / DAILY_TARGET.fat) * 100,
+        duration: 800,
+        useNativeDriver: false,
+      }).start();
+      Animated.timing(carbProgress, {
+        toValue: (totalCarbs / DAILY_TARGET.carbohydrates) * 100,
+        duration: 800,
+        useNativeDriver: false,
+      }).start();
+      Animated.timing(proteinProgress, {
+        toValue: (totalProteins / DAILY_TARGET.proteins) * 100,
+        duration: 800,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [consumed]);
+
+  const fatHeight = fatProgress.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0%", "100%"],
+    extrapolate: "clamp",
+  });
+  const carbHeight = carbProgress.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0%", "100%"],
+    extrapolate: "clamp",
+  });
+  const proteinHeight = proteinProgress.interpolate({
     inputRange: [0, 100],
     outputRange: ["0%", "100%"],
     extrapolate: "clamp",
   });
 
   return (
-    <ScrollView
-      contentContainerStyle={{ paddingBottom: hp("10%"), padding: wp("5%") }}
-      className="flex-1 bg-[#f8f8f8]"
-    >
-      <TextInput
-        placeholder="yağ miktarı gir"
-        onChangeText={handleProgressChange}
-        value={input}
-        keyboardType="numeric"
-        style={{ marginBottom: 20 }}
-      />
-      <View className="flex-row justify-around">
+    <View style={{ padding: wp("3%") }} className="flex-1 bg-[#f8f8f8]">
+      <View
+        style={{
+          padding: wp("2%"),
+        }}
+        className="flex-row justify-around"
+      >
         <View
           style={{
             width: wp("25%"),
@@ -78,13 +110,14 @@ export default function HomeScreen() {
             style={{
               backgroundColor: "#ffda03",
               width: "100%",
-              height: animatedHeight,
+              height: fatHeight,
               position: "absolute",
               bottom: 0,
             }}
           />
           <Text>Yağ</Text>
         </View>
+
         <View
           style={{
             width: wp("25%"),
@@ -101,13 +134,14 @@ export default function HomeScreen() {
             style={{
               backgroundColor: "#ff7a1b",
               width: "100%",
-              height: animatedHeight,
+              height: carbHeight,
               position: "absolute",
               bottom: 0,
             }}
           />
           <Text>Karbonhidrat</Text>
         </View>
+
         <View
           style={{
             width: wp("25%"),
@@ -124,7 +158,7 @@ export default function HomeScreen() {
             style={{
               backgroundColor: "#5e8aed",
               width: "100%",
-              height: animatedHeight,
+              height: proteinHeight,
               position: "absolute",
               bottom: 0,
             }}
@@ -132,37 +166,37 @@ export default function HomeScreen() {
           <Text>Protein</Text>
         </View>
       </View>
-      <View style={{ gap: hp("3%"), padding: wp("2%") }}>
-        <View style={{ gap: hp("2%") }}>
-          <Text className="font-bold text-2xl">Favoriler</Text>
-          {favorites.length === 0 ? (
-            <View className="items-center justify-center">
-              <Image
-                source={require("../../assets/emptyFavorites.png")}
-                style={{
-                  width: wp("30%"),
-                  height: wp("30%"),
-                  resizeMode: "contain",
-                }}
-              />
-              <Text className="text-base">Henüz Favori Yok</Text>
+
+      <View style={{ gap: hp("2%"), marginTop: hp("3%") }}>
+        <Text className="font-bold text-2xl">Favoriler</Text>
+        {favorites.length === 0 ? (
+          <View className="items-center justify-center">
+            <Image
+              source={require("../../assets/emptyFavorites.png")}
+              style={{
+                width: wp("25%"),
+                height: wp("25%"),
+                resizeMode: "contain",
+              }}
+            />
+            <Text className="font-semibold text-base">Henüz favori yok</Text>
+          </View>
+        ) : (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View className="flex-row" style={{ gap: wp("4%") }}>
+              {favorites.map((item) => (
+                <FavoriteCard
+                  key={item.id}
+                  barcode={item.barcode}
+                  name={item.name}
+                />
+              ))}
             </View>
-          ) : (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View className="flex-row" style={{ gap: wp("4%") }}>
-                {favorites.map((item) => (
-                  <FavoriteCard
-                    key={item.id}
-                    barcode={item.barcode}
-                    name={item.name}
-                  />
-                ))}
-              </View>
-            </ScrollView>
-          )}
-        </View>
-        <ConsumedList />
+          </ScrollView>
+        )}
       </View>
-    </ScrollView>
+
+      <ConsumedList />
+    </View>
   );
 }
