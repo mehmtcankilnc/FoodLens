@@ -13,7 +13,7 @@ export default function OnboardingItem({ item }) {
     >
       <Text
         className="text-center font-bold text-3xl italic"
-        style={{ width: wp("85%"), marginBottom: hp("5%") }}
+        style={{ width: wp("85%") }}
       >
         {item.title}
       </Text>
@@ -21,7 +21,7 @@ export default function OnboardingItem({ item }) {
         source={item.image}
         style={{ width: wp("60%"), height: hp("30%") }}
       />
-      <View className="items-center" style={{ gap: hp("5%") }}>
+      <View className="items-center" style={{ gap: wp("5%") }}>
         <Text
           className="text-center font-semibold text-xl color-[green]"
           style={{ width: wp("85%") }}

@@ -95,7 +95,7 @@ export default function Register({ navigation }) {
   return (
     <View className="flex-1 bg-[#f8f8f8]">
       <Text
-        className="font-bold text-3xl"
+        className="font-bold text-3xl text-white"
         style={{
           position: "absolute",
           top: hp("7%"),
@@ -105,7 +105,7 @@ export default function Register({ navigation }) {
       >
         Kayıt Ol
       </Text>
-      <View style={{ height: hp("9%"), backgroundColor: "#b7edbb" }}>
+      <View style={{ height: hp("9%"), backgroundColor: "#3f6942" }}>
         <Svg
           height={hp("25%")}
           width={wp("100%")}
@@ -113,7 +113,7 @@ export default function Register({ navigation }) {
           style={{ transform: [{ scaleX: -1 }] }}
         >
           <Path
-            fill="#b7edbb"
+            fill="#3f6942"
             d="M0,320L48,314.7C96,309,192,299,288,272C384,245,480,203,576,202.7C672,203,768,245,864,250.7C960,256,1056,224,1152,186.7C1248,149,1344,107,1392,85.3L1440,64L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
           />
         </Svg>
@@ -194,11 +194,13 @@ export default function Register({ navigation }) {
           </View>
           <View className="items-center" style={{ gap: hp("2%") }}>
             <Pressable
-              className="bg-[#b7edbb] justify-center rounded-xl"
+              className="bg-[#3f6942] justify-center rounded-xl"
               style={{ width: wp("75%"), height: hp("6%") }}
               onPress={onSignUpPress}
             >
-              <Text className="text-center font-bold text-xl">Kaydol</Text>
+              <Text className="text-center font-bold text-xl text-white">
+                Kaydol
+              </Text>
             </Pressable>
             <View className="flex-row items-center" style={{ gap: wp("5%") }}>
               <View
@@ -230,7 +232,7 @@ export default function Register({ navigation }) {
             <View className="flex-row">
               <Text className="font-medium">Zaten hesabın var mı? </Text>
               <Pressable onPress={() => navigation.navigate("Login")}>
-                <Text className="font-medium italic underline color-[#b7edbb]">
+                <Text className="font-medium italic underline color-[#3f6942]">
                   Giriş yap
                 </Text>
               </Pressable>

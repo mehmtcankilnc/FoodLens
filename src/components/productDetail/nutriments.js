@@ -128,7 +128,7 @@ export default function Nutriments({ product, amount }) {
         >
           <Text
             style={{
-              color: "#388e3c",
+              color: "black",
               fontSize: wp("3.5%"),
               textDecorationLine: "underline",
               fontWeight: "500",

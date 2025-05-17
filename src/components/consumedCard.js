@@ -14,13 +14,14 @@ export default function ConsumedList() {
   const { userId } = useAuth();
 
   return (
-    <View style={{ gap: hp("2%") }}>
-      <Text className="font-bold text-2xl">Bugün Tüketilenler</Text>
+    <View style={{ gap: hp("2%"), marginTop: hp("2%") }}>
+      <Text className="font-medium text-xl italic">Bugün Tüketilenler</Text>
 
       {consumed && consumed.length > 0 ? (
         <ScrollView
           style={{
             maxHeight: hp("40%"),
+            padding: wp("3%"),
           }}
           showsVerticalScrollIndicator={false}
         >

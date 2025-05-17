@@ -62,18 +62,18 @@ export default function ScanScreen({ navigation }) {
       }}
     >
       <View className="flex-row items-center justify-between">
-        <AntDesign name="back" size={36} color="#22a45d" />
+        <AntDesign name="back" size={36} color="#3f6942" />
         <Pressable
           style={{
             width: 150,
             height: 50,
-            backgroundColor: "#22a45d",
+            backgroundColor: "#3f6942",
             justifyContent: "center",
             borderRadius: 24,
           }}
           onPress={pickImage}
         >
-          <Text className="text-center font-semibold text-lg">
+          <Text className="text-center font-semibold text-lg text-white">
             Galeriden Seç
           </Text>
         </Pressable>
@@ -117,7 +117,7 @@ export default function ScanScreen({ navigation }) {
                     borderTopWidth: 4,
                     borderLeftWidth: 4,
                     borderTopLeftRadius: 10,
-                    borderColor: "#22a45d",
+                    borderColor: "#3f6942",
                     position: "absolute",
                     top: 0,
                     left: 0,
@@ -131,7 +131,7 @@ export default function ScanScreen({ navigation }) {
                     borderTopWidth: 4,
                     borderRightWidth: 4,
                     borderTopRightRadius: 10,
-                    borderColor: "#22a45d",
+                    borderColor: "#3f6942",
                     position: "absolute",
                     top: 0,
                     right: 0,
@@ -145,7 +145,7 @@ export default function ScanScreen({ navigation }) {
                     borderBottomWidth: 4,
                     borderLeftWidth: 4,
                     borderBottomLeftRadius: 10,
-                    borderColor: "#22a45d",
+                    borderColor: "#3f6942",
                     position: "absolute",
                     bottom: 0,
                     left: 0,
@@ -159,7 +159,7 @@ export default function ScanScreen({ navigation }) {
                     borderBottomWidth: 4,
                     borderRightWidth: 4,
                     borderBottomRightRadius: 10,
-                    borderColor: "#22a45d",
+                    borderColor: "#3f6942",
                     position: "absolute",
                     bottom: 0,
                     right: 0,

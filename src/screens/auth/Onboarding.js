@@ -38,14 +38,14 @@ export default function Onboarding({ navigation }) {
         viewabilityConfig={viewConfig}
         ref={slidesRef}
       />
-      <View className="items-center" style={{ marginBottom: hp("5%") }}>
+      <View className="items-center" style={{ marginBottom: hp("10%") }}>
         <Paginator data={OnboardingData} scrollX={scrollX} />
         <Pressable
-          className="bg-[#b7edbb] justify-center rounded-full"
-          style={{ width: wp("25%"), height: hp("6%") }}
+          className="bg-[#3f6942] justify-center rounded-full"
+          style={{ width: wp("25%"), height: hp("6%"), marginBottom: hp("2%") }}
           onPress={() => navigation.replace("Login")}
         >
-          <Text className="text-center font-bold text-xl">Atla</Text>
+          <Text className="text-center font-bold text-xl text-white">Atla</Text>
         </Pressable>
       </View>
     </View>

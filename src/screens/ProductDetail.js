@@ -15,8 +15,10 @@ import { useAuth } from "@clerk/clerk-expo";
 import { useFavorites } from "../hooks/useFavorites";
 import { addToConsumed } from "../services/consumedService";
 import { useConsumedToday } from "../hooks/useConsumedToday";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ProductDetail({ route }) {
+  const navigation = useNavigation();
   const { userId } = useAuth();
   const { product } = route.params;
   const [amount, setAmount] = useState("100");
@@ -51,6 +53,7 @@ export default function ProductDetail({ route }) {
     setAddPress((prev) => !prev);
     if (addPress === false) {
       addToConsumed(userId, product);
+      navigation.navigate("MainTabs");
     } else {
       const existing = consumed.find((item) => item.barcode === product.id);
       removeFavorite(userId, existing.id);
@@ -62,9 +65,13 @@ export default function ProductDetail({ route }) {
 
   return (
     <PaperProvider>
-      <View style={{ padding: wp("5%") }} className="flex-1 bg-[#fffaef]">
+      <View
+        style={{ padding: wp("5%"), marginBottom: wp("4%") }}
+        className="flex-1 bg-[#f8f8f8]"
+      >
         <ScrollView showsVerticalScrollIndicator={false}>
           <Pressable
+            onPress={() => navigation.navigate("MainTabs")}
             style={{
               paddingVertical: wp("2%"),
               position: "absolute",
@@ -86,7 +93,7 @@ export default function ProductDetail({ route }) {
             {product.product_name}
           </Text>
 
-          <Text className="self-center">
+          <Text className="self-center italic">
             {product.nutriments["energy-kcal"]} kcal
           </Text>
           <View
@@ -101,7 +108,13 @@ export default function ProductDetail({ route }) {
                   ? { uri: imageUrl }
                   : require("../assets/placeHolderImage.png")
               }
-              style={{ width: 250, height: 250 }}
+              style={{
+                width: 225,
+                height: 225,
+                borderRadius: 12,
+                borderColor: "black",
+                borderWidth: 2,
+              }}
             />
             <View
               style={{ position: "absolute", top: wp("1%"), right: wp("1%") }}
@@ -154,15 +167,15 @@ export default function ProductDetail({ route }) {
               placeholder={amount}
               keyboardType="numeric"
               style={{
-                backgroundColor: "#fffaef",
+                backgroundColor: "#f8f8f8",
                 borderRadius: 8,
                 fontSize: 14,
                 height: wp("8%"),
                 width: wp("35%"),
               }}
-              outlineColor="#52c46f"
-              activeOutlineColor="#388e3c"
-              right={<TextInput.Icon icon="pencil" color="#388e3c" />}
+              outlineColor="black"
+              activeOutlineColor="black"
+              right={<TextInput.Icon icon="pencil" color="black" />}
             />
           </View>
 

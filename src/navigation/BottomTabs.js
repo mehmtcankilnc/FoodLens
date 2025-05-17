@@ -1,18 +1,12 @@
-import React from "react";
-import { Image } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/main/HomeScreen";
 import ScanScreen from "../screens/main/ScanScreen";
 import Profile from "../screens/main/Profile";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { useUser } from "@clerk/clerk-expo";
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
-  const { user } = useUser();
-
   return (
     <Tab.Navigator
       screenOptions={{
@@ -20,20 +14,9 @@ export default function BottomTabs() {
         tabBarActiveTintColor: "#52c46f",
         tabBarInactiveTintColor: "black",
         tabBarStyle: {
-          position: "absolute",
-          bottom: wp("5%"),
-          height: wp("15%"),
-          marginHorizontal: wp("4%"),
           backgroundColor: "#f8f8f8",
           borderRadius: 20,
           elevation: 5,
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 5,
-          },
-          shadowOpacity: 0.1,
-          shadowRadius: 5,
         },
       }}
     >
@@ -48,7 +31,6 @@ export default function BottomTabs() {
               color={focused ? "#52c46f" : "black"}
             />
           ),
-
           title: "FoodLens",
           headerTitleAlign: "center",
           headerStyle: {

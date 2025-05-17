@@ -6,6 +6,8 @@ import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import AuthStack from "./src/navigation/AuthStack";
 import { PaperProvider } from "react-native-paper";
+import * as SystemUI from "expo-system-ui";
+import { useEffect } from "react";
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -18,6 +20,10 @@ const RootNavigation = () => {
 };
 
 export default function App() {
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync("#3f6942");
+  }, []);
+
   return (
     <ClerkProvider
       publishableKey={CLERK_PUBLISHABLE_KEY}

@@ -39,7 +39,14 @@ export default function ProgressBar() {
   }, [consumed]);
 
   return (
-    <View style={{ padding: wp("5%"), alignItems: "center" }}>
+    <View
+      style={{
+        flex: 1,
+        padding: wp("3%"),
+        alignItems: "center",
+        gap: hp("3%"),
+      }}
+    >
       {/* Kalori */}
       <View
         style={{
@@ -94,15 +101,13 @@ export default function ProgressBar() {
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-around",
-          marginTop: hp("5%"),
           gap: wp("2%"),
         }}
       >
         {/* Karbonhidrat */}
         <View
           style={{
-            width: wp("30%"),
+            flex: 1,
             padding: wp("3%"),
             elevation: 4,
             backgroundColor: "white",
@@ -119,7 +124,7 @@ export default function ProgressBar() {
             <Text style={{ fontSize: 12 }}>Karbonhidrat</Text>
           </View>
           <AnimatedCircularProgress
-            size={100}
+            size={90}
             width={10}
             fill={(totalCarbs / 300) * 100}
             tintColor="#ff6a00"
@@ -140,7 +145,7 @@ export default function ProgressBar() {
         {/* Protein */}
         <View
           style={{
-            width: wp("30%"),
+            flex: 1,
             padding: wp("3%"),
             elevation: 4,
             backgroundColor: "white",
@@ -157,7 +162,7 @@ export default function ProgressBar() {
             <Text style={{ fontSize: 12 }}>Protein</Text>
           </View>
           <AnimatedCircularProgress
-            size={100}
+            size={90}
             width={10}
             fill={(totalProteins / 50) * 100}
             tintColor="#5E8AED"
@@ -178,7 +183,7 @@ export default function ProgressBar() {
         {/* Yağ */}
         <View
           style={{
-            width: wp("30%"),
+            flex: 1,
             padding: wp("3%"),
             elevation: 4,
             backgroundColor: "white",
@@ -195,7 +200,7 @@ export default function ProgressBar() {
             <Text style={{ fontSize: 12 }}>Yağ</Text>
           </View>
           <AnimatedCircularProgress
-            size={100}
+            size={90}
             width={10}
             fill={(totalFat / 70) * 100}
             tintColor="#FFD700"
