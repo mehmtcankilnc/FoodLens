@@ -3,10 +3,18 @@ import HomeScreen from "../screens/main/HomeScreen";
 import ScanScreen from "../screens/main/ScanScreen";
 import Profile from "../screens/main/Profile";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
+import { Text } from "react-native";
+import { useUser } from "@clerk/clerk-expo";
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
+  const { user } = useUser();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -31,10 +39,15 @@ export default function BottomTabs() {
               color={focused ? "#52c46f" : "black"}
             />
           ),
-          title: "FoodLens",
-          headerTitleAlign: "center",
+          title: (
+            <Text className="font-bold text-3xl text-white">
+              Merhaba, {user?.firstName}!
+            </Text>
+          ),
+          headerTitleAlign: "left",
           headerStyle: {
             backgroundColor: "#3f6942",
+            height: hp("25%"),
           },
           headerTintColor: "white",
           headerTitleStyle: {
