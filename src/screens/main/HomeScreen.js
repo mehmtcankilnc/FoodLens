@@ -18,17 +18,38 @@ export default function HomeScreen() {
 
   const [searchText, setSearchText] = useState("");
 
+  const [products, setProducts] = useState([]);
+
   useEffect(() => {
     if (userId) {
       cleanOldConsumed(userId);
     }
   }, [userId]);
 
+  useEffect(() => {
+    fetch(
+      "https://script.google.com/macros/s/AKfycbyxSTbkuYMiaYuOqYDaWgsdLYW9w901bRzviUZaSxiThheYn89RuBfbtXu_rQVnGrO5gw/exec"
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts(data);
+      })
+      .catch((err) => {
+        console.error("API Hatası:", err);
+      });
+  }, []);
+
   return (
     <View
       style={{ paddingHorizontal: wp("3%") }}
       className="flex-1 bg-[#f8f8f8] items-center"
     >
+      {/* {products.map((item, index) => (
+        <View key={index} style={{ padding: 12, borderBottomWidth: 1 }}>
+          <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+          <Text>Kalori: {item.calories}</Text>
+        </View>
+      ))} */}
       <TextInput
         mode="outlined"
         dense
