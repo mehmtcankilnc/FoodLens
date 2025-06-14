@@ -87,14 +87,19 @@ export default function HomeScreen() {
           <Text className="font-medium text-xl italic">Favoriler</Text>
           {favorites.length === 0 ? (
             <View
-              className="items-center justify-center"
-              style={{ padding: wp("3%") }}
+              className="flex-row bg-[#d9ebd3] rounded-2xl justify-center items-center"
+              style={{
+                height: wp("11%"),
+                alignItems: "center",
+                marginTop: wp("4%"),
+                gap: wp("2%"),
+              }}
             >
               <Image
                 source={require("../../assets/heartIcon.png")}
                 style={{
-                  width: wp("25%"),
-                  height: wp("25%"),
+                  width: wp("11%"),
+                  height: wp("10%"),
                   resizeMode: "contain",
                 }}
               />

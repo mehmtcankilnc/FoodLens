@@ -51,12 +51,15 @@ export default function ConsumedList() {
           ))}
         </ScrollView>
       ) : (
-        <View style={{ alignItems: "center", marginTop: wp("4%") }}>
+        <View
+          className="flex-row bg-[#d9ebd3] rounded-2xl justify-center items-center"
+          style={{ alignItems: "center", marginTop: wp("4%"), gap: wp("2%") }}
+        >
           <Image
             source={require("../assets/noFood.png")}
             style={{
-              width: wp("30%"),
-              height: wp("30%"),
+              width: wp("11%"),
+              height: wp("12%"),
               resizeMode: "contain",
             }}
           />
