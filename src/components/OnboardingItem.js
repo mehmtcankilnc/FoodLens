@@ -30,7 +30,7 @@ export default function OnboardingItem({ item }) {
         </Text>
         <Text
           className="text-center font-medium text-base"
-          style={{ width: wp("85%") }}
+          style={{ width: wp("85%"), marginBottom: hp("5%") }}
         >
           {item.subText}
         </Text>

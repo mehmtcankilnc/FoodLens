@@ -10,6 +10,8 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import ConfirmModal from "../../components/ConfirmModal";
+import EmailVerifyModal from "../../components/EmailVerifyModal";
 
 export default function Profile() {
   const { user } = useUser();
@@ -23,6 +25,16 @@ export default function Profile() {
     fat: 48,
   });
 
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [confirmTitle, setConfirmTitle] = useState("");
+  const [onConfirmAction, setOnConfirmAction] = useState(() => () => {});
+  const [action, setAction] = useState("");
+
+  const [verificationModalVisible, setVerificationModalVisible] =
+    useState(false);
+  const [pendingEmailAddress, setPendingEmailAddress] = useState(null);
+
   useEffect(() => {
     setIsMounted(true);
     return () => setIsMounted(false);
@@ -34,11 +46,103 @@ export default function Profile() {
     setGoals(newGoals);
   };
 
+  const showConfirmModal = (message, title, action, actionName) => {
+    setConfirmMessage(message);
+    setConfirmTitle(title);
+    setOnConfirmAction(() => action);
+    setConfirmVisible(true);
+    setAction(actionName);
+  };
+
+  const handleUpdateName = async (newFirstName, newLastName) => {
+    if (!newFirstName || !newLastName) return;
+    try {
+      await user.update({
+        firstName: newFirstName,
+        lastName: newLastName,
+      });
+      alert("Ad soyad güncellendi!");
+    } catch (error) {
+      console.error("Ad soyad güncelleme hatası:", error);
+    }
+  };
+
+  const handleUpdateEmail = async (newEmail) => {
+    if (!newEmail) return;
+    try {
+      await user.createEmailAddress({ email: newEmail });
+
+      await user.reload();
+
+      const addedEmail = user.emailAddresses.find(
+        (e) => e.emailAddress === newEmail
+      );
+
+      if (!addedEmail) {
+        alert("E-posta eklenemedi.");
+        return;
+      }
+
+      await addedEmail.prepareVerification({ strategy: "email_code" });
+
+      setPendingEmailAddress(newEmail);
+      setVerificationModalVisible(true);
+    } catch (error) {
+      console.error("E-posta güncelleme hatası:", error);
+      alert("Kod gönderilemedi.");
+    }
+  };
+
+  const handleVerifyEmail = async (code) => {
+    try {
+      const cleanedCode = code.replace(/\s/g, "");
+
+      const email = user.emailAddresses.find(
+        (e) => e.emailAddress === pendingEmailAddress
+      );
+
+      if (!email) {
+        alert("E-posta bulunamadı.");
+        return;
+      }
+
+      await email.attemptVerification({ code: cleanedCode });
+
+      alert("E-posta doğrulandı!");
+      setVerificationModalVisible(false);
+    } catch (error) {
+      console.error("Doğrulama hatası:", error);
+      alert("Bir hata oluştu, lütfen tekrar deneyin.");
+    }
+  };
+
+  const handleUpdatePassword = async (oldPassword, newPassword) => {
+    if (!newPassword) return;
+    try {
+      await user.updatePassword({
+        currentPassword: oldPassword,
+        newPassword: newPassword,
+      });
+      alert("Şifre başarıyla değiştirildi.");
+    } catch (error) {
+      console.error("Şifre güncelleme hatası:", error);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut();
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await user.delete();
+      alert("Hesap silindi.");
+    } catch (error) {
+      console.error("Hesap silme hatası:", error);
     }
   };
 
@@ -124,6 +228,14 @@ export default function Profile() {
         <Pressable
           className="flex-row justify-between bg-[#eaeaea] rounded-md"
           style={{ padding: wp("3%") }}
+          onPress={() =>
+            showConfirmModal(
+              "Lütfen değiştirmek isteğiniz bilgileri giriniz.",
+              "Ad Soyad Değiştir",
+              handleUpdateName,
+              "changeFirstLastName"
+            )
+          }
         >
           <View className="flex-row items-center" style={{ gap: wp("5%") }}>
             <AntDesign name="user" size={24} color="black" />
@@ -134,6 +246,14 @@ export default function Profile() {
         <Pressable
           className="flex-row justify-between bg-[#eaeaea] rounded-md"
           style={{ padding: wp("3%") }}
+          onPress={() =>
+            showConfirmModal(
+              "Lütfen değiştirmek isteğiniz bilgileri giriniz.",
+              "E-Posta Değiştir",
+              handleUpdateEmail,
+              "changeEmail"
+            )
+          }
         >
           <View className="flex-row items-center" style={{ gap: wp("5%") }}>
             <Ionicons name="mail-outline" size={24} color="black" />
@@ -144,6 +264,14 @@ export default function Profile() {
         <Pressable
           className="flex-row justify-between bg-[#eaeaea] rounded-md"
           style={{ padding: wp("3%") }}
+          onPress={() =>
+            showConfirmModal(
+              "Lütfen değiştirmek isteğiniz bilgileri giriniz.",
+              "Şifre Değiştir",
+              handleUpdatePassword,
+              "changePassword"
+            )
+          }
         >
           <View className="flex-row items-center" style={{ gap: wp("5%") }}>
             <Ionicons name="lock-closed-outline" size={24} color="black" />
@@ -152,7 +280,14 @@ export default function Profile() {
           <Entypo name="chevron-small-right" size={24} color="black" />
         </Pressable>
         <Pressable
-          onPress={handleSignOut}
+          onPress={() =>
+            showConfirmModal(
+              "Çıkış yapmak istediğinize emin misiniz?",
+              "Çıkış Yap",
+              handleSignOut,
+              "handleLogout"
+            )
+          }
           className="flex-row justify-between bg-[#eaeaea] rounded-md"
           style={{ padding: wp("3%") }}
         >
@@ -169,6 +304,14 @@ export default function Profile() {
         <Pressable
           className="flex-row justify-between bg-[#eaeaea] rounded-md"
           style={{ padding: wp("3%") }}
+          onPress={() =>
+            showConfirmModal(
+              "Hesabı kalıcı olarak silmek istediğinize emin misiniz?",
+              "Hesabı Sil",
+              handleDeleteAccount,
+              "handleDeleteAccount"
+            )
+          }
         >
           <View className="flex-row items-center" style={{ gap: wp("5%") }}>
             <AntDesign name="delete" size={24} color="black" />
@@ -185,6 +328,40 @@ export default function Profile() {
           goals={goals}
         />
       )}
+      <ConfirmModal
+        visible={confirmVisible}
+        onClose={() => setConfirmVisible(false)}
+        onConfirm={(payload) => {
+          if (action === "changeFirstLastName") {
+            const { firstName, lastName } = payload || {};
+            handleUpdateName(firstName, lastName);
+          } else if (action === "changeEmail") {
+            const { email } = payload || {};
+            handleUpdateEmail(email);
+          } else if (action === "changePassword") {
+            const { oldPassword, password, passwordConfirm } = payload || {};
+            if (password !== passwordConfirm) {
+              alert("Şifreler uyuşmuyor!");
+              return;
+            }
+            handleUpdatePassword(oldPassword, password);
+          } else if (action === "handleLogout") {
+            handleSignOut();
+          } else if (action === "handleDeleteAccount") {
+            handleDeleteAccount();
+          }
+
+          setConfirmVisible(false);
+        }}
+        title={confirmTitle}
+        message={confirmMessage}
+        actionType={action}
+      />
+      <EmailVerifyModal
+        visible={verificationModalVisible}
+        onClose={() => setVerificationModalVisible(false)}
+        onVerify={(code) => handleVerifyEmail(code)}
+      />
     </View>
   );
 }
