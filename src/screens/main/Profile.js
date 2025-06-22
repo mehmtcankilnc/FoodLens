@@ -372,6 +372,6 @@ export default function Profile() {
         onClose={() => setVerificationModalVisible(false)}
         onVerify={(code) => handleVerifyEmail(code)}
       />
-    </View>
+    </ScrollView>
   );
 }
