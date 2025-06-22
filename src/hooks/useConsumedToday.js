@@ -1,4 +1,3 @@
-// src/hooks/useConsumedToday.js
 import { useState, useEffect } from "react";
 import { onValue, ref, getDatabase } from "firebase/database";
 import { useAuth } from "@clerk/clerk-expo";

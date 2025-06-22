@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable, Button } from "react-native";
+import { View, Text, Image, Pressable, Button, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
   widthPercentageToDP as wp,
@@ -43,11 +43,15 @@ export default function Profile() {
   };
 
   return (
-    <View
-      style={{ padding: wp("3%"), gap: hp("1%") }}
-      className="flex-1 bg-[#f8f8f8]"
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        padding: wp("3%"),
+        gap: hp("1%"),
+        alignItems: "center",
+      }}
     >
-      <View className="flex-row items-center" style={{ gap: wp("3%") }}>
+      <View className="items-center" style={{ gap: wp("3%") }}>
         <Image
           source={{ uri: user.imageUrl }}
           style={{ width: 75, height: 75, borderRadius: 9999 }}
@@ -59,63 +63,69 @@ export default function Profile() {
           </Text>
         </View>
       </View>
-      <Text style={{ marginTop: wp("2%") }} className="text-lg italic">
-        Kişisel Hedefler
-      </Text>
-      <View style={{ gap: wp("2%"), padding: wp("2%") }}>
+
+      <View
+        className="bg-[#f8f8f8] items-center"
+        style={{
+          gap: wp("2%"),
+          padding: wp("2%"),
+          elevation: 7,
+          width: wp("90%"),
+        }}
+      >
         <View className="flex-row" style={{ gap: wp("2%") }}>
           <View
-            style={{ padding: wp("2%") }}
-            className="flex-1 flex-row justify-between items-center bg-[#b5b5b5] rounded-md "
+            style={{ padding: wp("2%"), width: wp("100%") }}
+            className="items-center justify-center"
           >
-            <Text className="font-semibold text-lg">Kalori Hedefi</Text>
-            <Text className="font-medium text-lg italic">
+            <Text className="font-medium text-2xl italic">
               {goals.calories} kcal
             </Text>
+            <Text className=" text-lg">Kalori</Text>
           </View>
-          <Pressable
-            onPress={() => setGoalModalVisibility(true)}
-            style={{ padding: wp("2%") }}
-            className="flex rounded-md bg-[#b5b5b5]"
-          >
-            <MaterialCommunityIcons
-              name="lead-pencil"
-              size={24}
-              color="black"
-            />
-          </Pressable>
         </View>
         <View className="flex-row" style={{ gap: wp("2%") }}>
           <View
             style={{ padding: wp("2%") }}
-            className="flex-1 justify-between items-center bg-[#bcdceb] rounded-md "
+            className="flex-1 justify-between items-center "
           >
-            <Text numberOfLines={1} className="font-semibold text-lg">
-              Protein
-            </Text>
-            <Text className="font-medium text-lg italic">
+            <Text className="font-medium text-xl italic">
               {goals.protein} g
             </Text>
+            <Text numberOfLines={1} className=" text-base">
+              Protein
+            </Text>
           </View>
+
           <View
             style={{ padding: wp("2%") }}
-            className="flex-1 justify-between items-center bg-[#ffa789] rounded-md "
+            className="flex-1 justify-between items-center  "
           >
-            <Text numberOfLines={1} className="font-semibold text-lg">
+            <Text className="font-medium text-xl italic">{goals.carbs} g</Text>
+
+            <Text numberOfLines={1} className=" text-base">
               Karbonhidrat
             </Text>
-            <Text className="font-medium text-lg italic">{goals.carbs} g</Text>
           </View>
+
           <View
             style={{ padding: wp("2%") }}
-            className="flex-1 justify-between items-center bg-[#f7f296] rounded-md "
+            className="flex-1 justify-between items-center"
           >
-            <Text numberOfLines={1} className="font-semibold text-lg">
+            <Text className="font-medium text-xl italic">{goals.fat} g</Text>
+            <Text numberOfLines={1} className="text-base">
               Yağ
             </Text>
-            <Text className="font-medium text-lg italic">{goals.fat} g</Text>
           </View>
         </View>
+        <Pressable
+          onPress={() => setGoalModalVisibility(true)}
+          style={{ padding: wp("2%"), gap: wp("2%") }}
+          className="flex-row items-center bg-[#3f6942] rounded-md"
+        >
+          <Text className="text-white">Hedefleri Düzenle</Text>
+          <MaterialCommunityIcons name="lead-pencil" size={24} color="white" />
+        </Pressable>
       </View>
       <Text style={{ marginTop: wp("2%") }} className="text-lg italic">
         Kişisel Bilgiler
@@ -185,6 +195,6 @@ export default function Profile() {
           goals={goals}
         />
       )}
-    </View>
+    </ScrollView>
   );
 }

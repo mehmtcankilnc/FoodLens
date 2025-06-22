@@ -22,6 +22,7 @@ export default function ProductDetail({ route }) {
   const { userId } = useAuth();
   const { product } = route.params;
   const [amount, setAmount] = useState("100");
+  const [piece, setPiece] = useState("1");
   const [favoritePress, setFavoritePress] = useState(false);
   const [addPress, setAddPress] = useState(false);
   const ingredientsText = product.ingredients_text?.toLowerCase();
@@ -51,8 +52,28 @@ export default function ProductDetail({ route }) {
 
   const handleAddPress = () => {
     setAddPress((prev) => !prev);
+
     if (addPress === false) {
-      addToConsumed(userId, product);
+      const gram = parseFloat(amount) || 100;
+      const adet = parseInt(piece) || 1;
+      const oran = (gram * adet) / 100;
+
+      const scaledNutriments = {};
+      for (let key in product.nutriments) {
+        const value = parseFloat(product.nutriments[key]);
+        scaledNutriments[key] = isNaN(value)
+          ? product.nutriments[key]
+          : (value * oran).toFixed(2);
+      }
+
+      const updatedProduct = {
+        ...product,
+        nutriments: scaledNutriments,
+        consumed_amount: gram,
+        consumed_piece: adet,
+      };
+
+      addToConsumed(userId, updatedProduct);
       navigation.navigate("MainTabs");
     } else {
       const existing = consumed.find((item) => item.barcode === product.id);
@@ -81,6 +102,7 @@ export default function ProductDetail({ route }) {
           >
             <Entypo name="circle-with-cross" size={34} color="black" />
           </Pressable>
+
           <Text
             style={{
               fontSize: 25,
@@ -96,10 +118,9 @@ export default function ProductDetail({ route }) {
           <Text className="self-center italic">
             {product.nutriments["energy-kcal"]} kcal
           </Text>
+
           <View
-            style={{
-              padding: wp("4%"),
-            }}
+            style={{ padding: wp("4%") }}
             className="flex-row items-center justify-center"
           >
             <Image
@@ -146,24 +167,13 @@ export default function ProductDetail({ route }) {
 
           <View
             style={{ marginTop: wp("1%"), marginBottom: wp("8%") }}
-            className="flex-row justify-around items-center"
+            className="items-center gap-y-2"
           >
-            <View className="justify-center items-center">
-              <Text>Miktar (g):</Text>
-              <Text className="font-light text-sm">
-                (Tükettiğiniz miktarı girin!)
-              </Text>
-            </View>
-
+            <Text>Miktar (g):</Text>
             <TextInput
               mode="outlined"
               value={amount}
-              onChangeText={(text) => {
-                const numericValue = parseFloat(text);
-                if (isNaN(numericValue) || numericValue <= 100) {
-                  setAmount(text);
-                }
-              }}
+              onChangeText={(text) => setAmount(text)}
               placeholder={amount}
               keyboardType="numeric"
               style={{
@@ -177,16 +187,34 @@ export default function ProductDetail({ route }) {
               activeOutlineColor="black"
               right={<TextInput.Icon icon="pencil" color="black" />}
             />
+
+            <Text>Ürün Adedi:</Text>
+            <TextInput
+              mode="outlined"
+              value={piece}
+              onChangeText={(text) => setPiece(text)}
+              keyboardType="numeric"
+              style={{
+                backgroundColor: "#f8f8f8",
+                borderRadius: 8,
+                fontSize: 14,
+                height: wp("8%"),
+                width: wp("35%"),
+              }}
+              outlineColor="black"
+              activeOutlineColor="black"
+              right={<TextInput.Icon icon="plus" color="black" />}
+            />
           </View>
 
-          <Nutriments product={product} amount={amount} />
+          <Nutriments product={product} amount={amount} piece={piece} />
           <HealthInfo product={product} />
           <ExtraInfo product={product} />
 
           <Pressable onPress={() => setVisible(true)}>
             <Text
               style={{ padding: wp("4%") }}
-              className="underline   text-xl self-center"
+              className="underline text-xl self-center"
             >
               İçindekiler
             </Text>

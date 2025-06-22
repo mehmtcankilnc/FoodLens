@@ -5,11 +5,14 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function ScanScreen({ navigation }) {
   const cameraRef = useRef(null);
   const [scanned, setScanned] = useState(false);
   const [image, setImage] = useState(null);
+
+  const isFocused = useIsFocused();
 
   useFocusEffect(
     useCallback(() => {
@@ -81,14 +84,16 @@ export default function ScanScreen({ navigation }) {
       <View className="items-center">
         {!scanned && (
           <View style={{ position: "relative", width: 300, height: 500 }}>
-            <CameraView
-              style={{ width: 300, height: 500, borderRadius: 24 }}
-              ref={cameraRef}
-              facing="back"
-              mute={false}
-              responsiveOrientationWhenOrientationLocked
-              onBarcodeScanned={handleBarCodeScanned}
-            />
+            {isFocused && !scanned && (
+              <CameraView
+                style={{ width: 300, height: 500, borderRadius: 24 }}
+                ref={cameraRef}
+                facing="back"
+                mute={false}
+                responsiveOrientationWhenOrientationLocked
+                onBarcodeScanned={handleBarCodeScanned}
+              />
+            )}
 
             {/* Overlay View burada */}
             <View

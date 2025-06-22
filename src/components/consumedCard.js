@@ -63,7 +63,11 @@ export default function ConsumedList() {
               resizeMode: "contain",
             }}
           />
-          <Text className="text-base">Bugün Henüz Ürün Tüketilmedi</Text>
+          <View className="items-center">
+            <Text className="text-base text-center">
+              Bugün Henüz Ürün{"\n"}Tüketilmedi
+            </Text>
+          </View>
         </View>
       )}
     </View>

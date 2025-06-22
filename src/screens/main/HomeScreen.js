@@ -6,25 +6,17 @@ import {
 } from "react-native-responsive-screen";
 import { useFavorites } from "../../hooks/useFavorites";
 import ConsumedList from "../../components/consumedCard";
-import { useAuth } from "@clerk/clerk-expo";
-import { cleanOldConsumed } from "../../services/consumedService";
 import FavoriteCard from "../../components/favoriteCard";
 import ProgressBar from "../../components/progressBar";
 import { TextInput } from "react-native-paper";
+import SearchResults from "../../components/searchResults";
 
 export default function HomeScreen() {
   const favorites = useFavorites();
-  const { userId } = useAuth();
-
+  const [openModal, setOpenModal] = useState(false);
   const [searchText, setSearchText] = useState("");
-
   const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    if (userId) {
-      cleanOldConsumed(userId);
-    }
-  }, [userId]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     fetch(
@@ -39,17 +31,19 @@ export default function HomeScreen() {
       });
   }, []);
 
+  const searchProduct = () => {
+    const results = products.filter((item) =>
+      item.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setFilteredProducts(results);
+    setOpenModal(true);
+  };
+
   return (
     <View
       style={{ paddingHorizontal: wp("3%") }}
       className="flex-1 bg-[#f8f8f8] items-center"
     >
-      {/* {products.map((item, index) => (
-        <View key={index} style={{ padding: 12, borderBottomWidth: 1 }}>
-          <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
-          <Text>Kalori: {item.calories}</Text>
-        </View>
-      ))} */}
       <TextInput
         mode="outlined"
         dense
@@ -57,7 +51,7 @@ export default function HomeScreen() {
         placeholder="Ürün Ara"
         value={searchText}
         onChangeText={(text) => setSearchText(text)}
-        onSubmitEditing={() => console.log("holll")}
+        onSubmitEditing={searchProduct}
         returnKeyType="search"
         style={{
           width: wp("80%"),
@@ -73,14 +67,22 @@ export default function HomeScreen() {
             placeholder: "gray",
           },
         }}
-        right={<TextInput.Icon icon="magnify" />}
+        right={<TextInput.Icon onPress={searchProduct} icon="magnify" />}
+      />
+
+      <SearchResults
+        visible={openModal}
+        onDismiss={setOpenModal}
+        filteredProducts={filteredProducts}
       />
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: hp("5%") }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="font-medium text-xl italic">Günlük Besin Durumu</Text>
+        <Text className="font-medium text-xl italic mt-4">
+          Günlük Besin Durumu
+        </Text>
         <ProgressBar />
         <ConsumedList />
         <View style={{ gap: hp("2%"), marginTop: hp("3%") }}>
