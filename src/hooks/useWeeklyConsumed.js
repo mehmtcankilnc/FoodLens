@@ -36,7 +36,7 @@ export const useWeeklyConsumed = (userId) => {
 
         Object.values(dayData).forEach((item) => {
           const n = item.nutriments || {};
-          calories += safeParse(n.energy_kcal);
+          calories += safeParse(n["energy-kcal"]);
           carbs += safeParse(n.carbohydrates);
           proteins += safeParse(n.proteins);
           fat += safeParse(n.fat);
