@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Pressable, ScrollView } from "react-native"; // ScrollView eklendi
+import { View, Text, Pressable, ScrollView } from "react-native";
 import { Modal, Portal } from "react-native-paper";
 import {
   widthPercentageToDP as wp,
@@ -65,8 +65,8 @@ export default function SearchResults({
     for (let key in formattedItem.nutriments) {
       const value = parseFloat(formattedItem.nutriments[key]);
       scaledNutriments[key] = isNaN(value)
-        ? formattedItem.nutriments[key]
-        : (value * oran).toFixed(2);
+        ? 0
+        : parseFloat((value * oran).toFixed(2)); // DÜZELTİLEN KISIM
     }
 
     const updatedProduct = {
@@ -90,7 +90,7 @@ export default function SearchResults({
           padding: 20,
           borderRadius: 12,
           alignSelf: "center",
-          maxHeight: hp("80%"), // modal yüksekliğini sınırlıyoruz
+          maxHeight: hp("80%"),
         }}
       >
         {filteredProducts.length > 0 && (
@@ -113,7 +113,7 @@ export default function SearchResults({
                   borderColor: "#ccc",
                 }}
               >
-                <View className="flex-row items-center ">
+                <View className="flex-row items-center">
                   <Text style={{ fontWeight: "bold", marginRight: wp("4%") }}>
                     {item.name}
                   </Text>

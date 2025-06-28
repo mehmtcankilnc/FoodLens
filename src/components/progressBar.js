@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import {
@@ -58,45 +58,40 @@ export default function ProgressBar() {
         }}
         className="w-full flex-row justify-between items-center"
       >
-        <View
-          style={{
-            alignItems: "center",
-          }}
-        >
+        <View style={{ alignItems: "center" }}>
           <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-            {2000 - Math.round(totalCalories)} kcal
+            {Math.max(0, 2000 - Math.round(totalCalories))} kcal
           </Text>
           <Text style={{ color: "#888" }}>Kalan Kalori</Text>
         </View>
         <AnimatedCircularProgress
           size={160}
           width={14}
-          fill={(totalCalories / 2000) * 100}
+          fill={Math.max(0, (totalCalories / 2000) * 100)}
           tintColor="black"
           backgroundColor="#EDEDED"
           rotation={0}
           lineCap="round"
         >
-          {(fill) => (
-            <View>
-              <View style={{ alignItems: "center" }}>
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                  {Math.round(totalCalories)} kcal
-                </Text>
-                <Text style={{ color: "#888", fontSize: 10 }}>
-                  Tüketilen Kalori
-                </Text>
-              </View>
+          {() => (
+            <View style={{ alignItems: "center" }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                {Math.round(totalCalories)} kcal
+              </Text>
+              <Text style={{ color: "#888", fontSize: 10 }}>
+                Tüketilen Kalori
+              </Text>
               <Ionicons
-                className="self-center mt-3"
                 name="flame-sharp"
                 size={40}
                 color="black"
+                style={{ marginTop: 10 }}
               />
             </View>
           )}
         </AnimatedCircularProgress>
       </View>
+
       {/* Makrolar */}
       <View
         style={{
@@ -126,7 +121,7 @@ export default function ProgressBar() {
           <AnimatedCircularProgress
             size={90}
             width={10}
-            fill={(totalCarbs / 300) * 100}
+            fill={Math.max(0, (totalCarbs / 300) * 100)}
             tintColor="#ff6a00"
             backgroundColor="#ffb49c"
             rotation={0}
@@ -164,7 +159,7 @@ export default function ProgressBar() {
           <AnimatedCircularProgress
             size={90}
             width={10}
-            fill={(totalProteins / 50) * 100}
+            fill={Math.max(0, (totalProteins / 50) * 100)}
             tintColor="#5E8AED"
             backgroundColor="#D6E4FB"
             rotation={0}
@@ -202,7 +197,7 @@ export default function ProgressBar() {
           <AnimatedCircularProgress
             size={90}
             width={10}
-            fill={(totalFat / 70) * 100}
+            fill={Math.max(0, (totalFat / 70) * 100)}
             tintColor="#FFD700"
             backgroundColor="#FFF7C2"
             rotation={0}
